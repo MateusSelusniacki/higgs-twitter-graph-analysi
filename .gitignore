@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Dados grandes
+data/raw/
+data/processed/
+
+# Saídas geradas automaticamente
+outputs/figures/
+outputs/tables/
+
+# Sistema
+.DS_Store
+Thumbs.db
