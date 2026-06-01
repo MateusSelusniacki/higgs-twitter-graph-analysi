@@ -46,8 +46,6 @@ projeto-grafos/
 ├── data/
 │   ├── raw/
 │   └── processed/
-├── notebooks/
-│   └── 01_basic_stats.ipynb
 ├── outputs/
 │   ├── figures/
 │   ├── tables/
