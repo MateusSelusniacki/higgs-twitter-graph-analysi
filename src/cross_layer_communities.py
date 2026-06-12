@@ -61,7 +61,7 @@ def compare_two_layers(
     col_b = f"{layer_b}_community"
 
     # Caso diagonal da matriz: camada comparada com ela mesma.
-    # NMI e ARI devem ser 1, pois a partição é idêntica.
+    # NMI e ARI devem ser 1, pois a particao e identica.
     if layer_a == layer_b:
         return {
             "layer_a": layer_a,
@@ -105,24 +105,30 @@ def run_cross_layer_community_analysis(
     graphs: dict[str, nx.DiGraph],
     layers: list[str] | None = None,
 ) -> pd.DataFrame:
-    print("\nExecutando comparação de comunidades entre camadas...")
+    print("\nExecutando comparacao de comunidades entre camadas...")
 
     OUTPUT_TABLES.mkdir(parents=True, exist_ok=True)
 
     if layers is None:
-        layers = ["retweet", "mention", "reply"]
+        # Inclui a camada social para produzir a matriz 4x4 completa
+        # (social, retweet, mention, reply), conforme a proposta.
+        layers = ["social", "retweet", "mention", "reply"]
 
     community_tables = {}
 
     for layer in layers:
         if layer not in graphs:
-            raise ValueError(f"Camada não encontrada: {layer}")
+            raise ValueError(f"Camada nao encontrada: {layer}")
 
+        cache_path = OUTPUT_TABLES / f"{layer}_louvain_communities.csv"
+
+        # A deteccao de comunidades na camada social e cara (~14,8M arestas).
+        # Se a particao ja foi calculada antes, reutiliza o CSV em cache.
         community_tables[layer] = detect_communities_for_layer(
-            layer,
-            graphs[layer],
-            use_largest_component=True,
-        )
+              layer,
+              graphs[layer],
+              use_largest_component=True,
+       )
 
     rows = []
 

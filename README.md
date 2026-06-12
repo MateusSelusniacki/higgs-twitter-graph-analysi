@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 # Higgs Twitter Dataset - Graph Analysis
 
 Final project for **MO412 - Graph Algorithms**.
@@ -43,7 +42,10 @@ This project investigates the following questions:
 projeto-grafos/
 ├── main.py
 ├── requirements.txt
+├── requirements_GPU.txt
 ├── README.md
+├── Proposition.pdf
+├── report.tex / report.pdf
 ├── data/
 │   ├── raw/
 │   └── processed/
@@ -59,8 +61,10 @@ projeto-grafos/
     ├── communities.py
     ├── concentration.py
     ├── cross_layer_communities.py
+    ├── gpu.py
     ├── layer_correlation.py
     ├── load_graphs.py
+    ├── powerlaw_fit.py
     ├── report_summary.py
     ├── robustness.py
     └── temporal_analysis.py
@@ -141,15 +145,43 @@ This command executes:
 1. data loading and cleaning;
 2. basic graph statistics;
 3. degree distribution generation;
-4. retweet centrality analysis;
-5. retweet concentration analysis;
-6. Louvain community detection;
-7. internal/external retweet community flow analysis;
-8. social-retweet centrality correlation;
-9. cross-layer community comparison;
-10. temporal analysis;
-11. robustness analysis;
-12. automatic summary report generation.
+4. power-law (scale-free) fitting of degree distributions;
+5. retweet centrality analysis;
+6. retweet concentration analysis;
+7. Louvain community detection;
+8. internal/external retweet community flow analysis;
+9. structural comparison between interaction layers (modularity and internal/external edge ratios, Q2);
+10. social-retweet centrality correlation;
+11. cross-layer community comparison;
+12. temporal analysis;
+13. robustness analysis;
+14. automatic summary report generation.
+
+---
+
+## GPU Acceleration (optional)
+
+The heavy graph algorithms (Louvain, PageRank, k-core, HITS, connected
+components) can run on an NVIDIA GPU via the zero-code-change
+[`nx-cugraph`](https://github.com/rapidsai/nx-cugraph) backend for NetworkX.
+
+Requirements: Linux or Windows + WSL2, an NVIDIA GPU with compute capability
+7.0+, CUDA 12.2+, and Python 3.11-3.13. Install the backend:
+
+```bash
+pip install nx-cugraph-cu12 --extra-index-url https://pypi.nvidia.com
+```
+
+Then pass `--gpu` to the pipeline:
+
+```bash
+python main.py --gpu
+```
+
+If `nx-cugraph` is not installed, the `--gpu` flag is ignored and the code
+falls back to the CPU. Note that GPU Louvain may produce slightly different
+community labels (and thus NMI/ARI values) than the CPU run; keep the CPU run
+as the canonical reference if you need reproducible headline numbers.
 
 ---
 
@@ -173,12 +205,16 @@ Important tables include:
 
 ```text
 basic_summary.csv
+powerlaw_fit_summary.csv
+powerlaw_fit_comparisons.csv
 retweet_centralities.csv
 retweet_centralities_top_50.csv
 retweet_concentration_summary.csv
 retweet_communities_summary.csv
 retweet_community_flow_summary.csv
+community_structure_by_layer.csv
 social_retweet_correlation_summary.csv
+social_retweet_user_centralities.csv
 cross_layer_community_comparison.csv
 cross_layer_nmi_matrix.csv
 cross_layer_ari_matrix.csv
@@ -237,6 +273,14 @@ Degree distributions are generated for:
 
 Plots are produced in both linear and log-log scales.
 
+### Power-Law Fitting
+
+Using the `powerlaw` package, each layer's degree distribution is fitted to test the scale-free hypothesis:
+
+- estimated exponent (alpha) and xmin;
+- log-likelihood ratio comparisons against alternative distributions (lognormal, exponential, truncated power law);
+- results saved in `powerlaw_fit_summary.csv` and `powerlaw_fit_comparisons.csv`.
+
 ### Centrality Analysis
 
 For the retweet network, the project computes:
@@ -277,9 +321,26 @@ The project measures whether retweets occurred inside or outside detected commun
 - internal retweet ratio;
 - external retweet ratio.
 
+### Layer Structure Comparison (Q2)
+
+For each interaction layer (retweet, mention, reply), the project compares the strength of community structure:
+
+- Louvain modularity per layer;
+- internal/external edge ratios per layer;
+- results saved in `community_structure_by_layer.csv`.
+
+This supports the reformulated Question 2 (amplification vs. dialogue).
+
 ### Social-Retweet Correlation
 
-The project compares centrality in the social layer and retweet layer using:
+The project compares centralities of users present in both the social layer and the retweet layer. For retweets, edges are reversed to represent information flow (original author -> retweeter). Compared metrics:
+
+- in/out/total degree;
+- PageRank;
+- HITS hub and authority scores;
+- k-core number.
+
+Rankings are compared using:
 
 - Spearman correlation;
 - Kendall correlation;
@@ -287,7 +348,7 @@ The project compares centrality in the social layer and retweet layer using:
 
 ### Cross-Layer Community Comparison
 
-Communities are detected independently in the retweet, mention, and reply layers. The partitions are compared using:
+Communities are detected independently in the social, retweet, mention, and reply layers, producing a full 4x4 comparison matrix. The partitions are compared using:
 
 - Normalized Mutual Information;
 - Adjusted Rand Index.
@@ -356,4 +417,3 @@ Generated outputs may be ignored by Git depending on the repository `.gitignore`
 Final project for **MO412 - Graph Algorithms**  
 Institute of Computing, University of Campinas  
 First semester of 2026
-=======
