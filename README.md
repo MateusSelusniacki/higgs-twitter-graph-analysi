@@ -98,6 +98,8 @@ The `.edgelist` files are used to build the aggregated graph layers. The `higgs-
 
 ## Installation
 
+This process requires Python 3 installed.
+
 Create and activate a virtual environment.
 
 ### Windows PowerShell
@@ -114,6 +116,28 @@ pip install -r requirements.txt
 ```
 
 ---
+
+
+### GNU/Linux Systems Bash
+
+```bash
+python -m venv .venv
+. .venv/bin/activate
+```
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Or, if you are in Linux and have CUDA 13 installed:
+
+```bash
+pip install -r requirements_GPU.txt
+```
+
+
 
 ## Requirements
 
