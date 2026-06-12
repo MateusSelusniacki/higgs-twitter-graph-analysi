@@ -96,23 +96,34 @@ def generate_summary_report() -> Path:
 
         f.write("## 4. Social-retweet centrality correlation\n\n")
         if correlation is not None:
-            best = correlation.iloc[0]
+            correlation = correlation.copy()
+            correlation["abs_spearman"] = correlation["spearman"].abs()
+            best = correlation.sort_values("abs_spearman", ascending=False).iloc[0]
 
             f.write(
-                f"The strongest reported comparison was between "
-                f"**{best['social_metric']}** and **{best['retweet_metric']}**, "
-                f"with Spearman correlation **{best['spearman']:.4f}** and Kendall "
-                f"correlation **{best['kendall']:.4f}**.\n\n"
+                "We compared users present in both the social layer and the retweet "
+                "layer. For retweets, edges were reversed to represent information "
+                "flow from the original source to the user who retweeted.\n\n"
             )
 
+            f.write(correlation.drop(columns=["abs_spearman"]).to_markdown(index=False))
+            f.write("\n\n")
+
             f.write(
+                f"The strongest comparison was between "
+                f"**{best['social_metric']}** and **{best['retweet_metric']}**, "
+                f"with Spearman correlation **{best['spearman']:.4f}** and Kendall "
+                f"correlation **{best['kendall']:.4f}**. "
                 f"The top-100 overlap for this comparison was "
                 f"**{best['top_100_overlap']:.2%}**.\n\n"
             )
 
             f.write(
-                "This suggests a moderate relationship between social popularity "
-                "and retweet diffusion, but not a perfect correspondence.\n\n"
+                "Overall, the results indicate whether social centrality translates "
+                "into retweet centrality. High correlations and high top-k overlap "
+                "would mean that central social users are also central spreaders; "
+                "moderate or low values mean that social visibility helps, but does "
+                "not fully determine who drives retweet diffusion.\n\n"
             )
 
         f.write("## 5. Cross-layer community comparison\n\n")

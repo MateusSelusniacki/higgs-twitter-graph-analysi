@@ -25,11 +25,22 @@ This supports the interpretation that retweets mostly act as within-community am
 
 ## 4. Social-retweet centrality correlation
 
-The strongest reported comparison was between **social_in_degree** and **retweet_out_degree**, with Spearman correlation **0.3863** and Kendall correlation **0.3218**.
+We compared users present in both the social layer and the retweet layer. For retweets, edges were reversed to represent information flow from the original source to the user who retweeted.
 
-The top-100 overlap for this comparison was **40.00%**.
+| comparison_type   | social_metric          | retweet_metric               |   users_in_both_layers |   users_used |   spearman |   spearman_p_value |    kendall |   kendall_p_value |   top_50_overlap |   top_100_overlap |   top_500_overlap |
+|:------------------|:-----------------------|:-----------------------------|-----------------------:|-------------:|-----------:|-------------------:|-----------:|------------------:|-----------------:|------------------:|------------------:|
+| degree            | social_in_degree       | retweet_info_out_degree      |                 256491 |       256491 |  0.386293  |       0            |  0.321777  |      0            |             0.32 |              0.4  |             0.446 |
+| degree            | social_total_degree    | retweet_info_total_degree    |                 256491 |       256491 |  0.322792  |       0            |  0.257831  |      0            |             0.34 |              0.39 |             0.436 |
+| degree            | social_total_degree    | retweet_info_out_degree      |                 256491 |       256491 |  0.321282  |       0            |  0.2603    |      0            |             0.34 |              0.39 |             0.444 |
+| k_core            | social_core_number     | retweet_info_core_number     |                 256491 |       256491 |  0.259201  |       0            |  0.208759  |      0            |             0.02 |              0.03 |             0.044 |
+| degree            | social_out_degree      | retweet_info_out_degree      |                 256491 |       256491 |  0.207913  |       0            |  0.167425  |      0            |             0.04 |              0.02 |             0.02  |
+| hits_authority    | social_authority_score | retweet_info_authority_score |                 256491 |       256491 | -0.112883  |       0            | -0.0760205 |      0            |             0    |              0    |             0.004 |
+| hits_hub          | social_hub_score       | retweet_info_hub_score       |                 256491 |       256491 |  0.0544531 |       1.17381e-167 |  0.0427191 |      1.13155e-167 |             0    |              0    |             0.018 |
+| pagerank          | social_pagerank        | retweet_info_pagerank        |                 256491 |       256491 |  0.0427595 |       4.35977e-104 |  0.0323468 |      2.1793e-128  |             0    |              0    |             0.004 |
 
-This suggests a moderate relationship between social popularity and retweet diffusion, but not a perfect correspondence.
+The strongest comparison was between **social_in_degree** and **retweet_info_out_degree**, with Spearman correlation **0.3863** and Kendall correlation **0.3218**. The top-100 overlap for this comparison was **40.00%**.
+
+Overall, the results indicate whether social centrality translates into retweet centrality. High correlations and high top-k overlap would mean that central social users are also central spreaders; moderate or low values mean that social visibility helps, but does not fully determine who drives retweet diffusion.
 
 ## 5. Cross-layer community comparison
 
