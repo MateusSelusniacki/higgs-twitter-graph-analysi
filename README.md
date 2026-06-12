@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 # Higgs Twitter Dataset - Graph Analysis
 
 Final project for **MO412 - Graph Algorithms**.
@@ -355,3 +356,4 @@ Generated outputs may be ignored by Git depending on the repository `.gitignore`
 Final project for **MO412 - Graph Algorithms**  
 Institute of Computing, University of Campinas  
 First semester of 2026
+=======
